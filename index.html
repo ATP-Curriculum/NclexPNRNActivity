@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activity</title>
+  </head>
+  <body>
+    <div class="question" id="1">
+      <div class="left-container">
+        <div class="l-container-header">
+          <h4>Patient Information</h4>
+        </div>
+
+        <div class="l-container-btns">
+          <button
+            class="case-info-btn active"
+            onclick="changeInfoSection('nurseNotes', event)"
+          >
+            Nurse's Notes
+          </button>
+
+          <button
+            class="case-info-btn"
+            onclick="changeInfoSection('vitalSigns', event)"
+          >
+            Vital Signs
+          </button>
+
+          <button
+            class="case-info-btn"
+            onclick="changeInfoSection('assessment', event)"
+          >
+            Assessment
+          </button>
+        </div>
+        <div class="l-container-body">
+          <div class="l-container-body-header">
+            <h4>Nurse's Notes</h4>
+          </div>
+
+          <div class="l-container-body-content">
+            72-year-old client admitted with productive cough, fever, fatigue,
+            and increasing shortness of breath. Thick yellow sputum observed.
+            Chest X-ray pending.
+          </div>
+        </div>
+      </div>
+
+      <div class="right-container">
+        <div class="r-container-header">
+          <h4>Question 1</h4>
+        </div>
+
+        <div class="r-container-body">
+          <p class="question-text">
+            Which assessment finding requires immediate nursing intervention?
+          </p>
+
+          <div class="question-options">
+            <label>
+              <input type="radio" name="question-options" id="option1" />
+              Temperature 38.8°C (101.8°F)
+            </label>
+
+            <label>
+              <input type="radio" name="question-options" id="option2" />
+              Thick yellow sputum
+            </label>
+
+            <label>
+              <input type="radio" name="question-options" id="option3" />
+              Oxygen saturation 89% on room air
+            </label>
+
+            <label>
+              <input type="radio" name="question-options" id="option4" />
+              Fatigue
+            </label>
+          </div>
+
+          <div class="feedback"></div>
+
+          <button class="submit-btn" onClick="checkAnswer()">
+            Submit Answer
+          </button>
+          <button
+            class="next-btn"
+            style="display: none"
+            onClick="changeQuestion()"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const changeInfoSection = (tabId, event) => {
+        document.querySelectorAll(".case-info-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+
+        event.currentTarget.classList.add("active");
+        const tabsInfo = {
+          nurseNotes: {
+            header: "Nurse's Notes",
+            content:
+              "72-year-old client admitted with productive cough, fever, fatigue, and increasing shortness of breath. Thick yellow sputum observed. Chest X-ray pending.",
+          },
+          vitalSigns: {
+            header: "Vital Signs",
+            content: `
+          <ul>
+              <li><strong>Temperature:</strong> 38.8°C (101.8°F)</li>
+              <li><strong>Heart Rate:</strong> 102 bpm</li>
+              <li><strong>Blood Pressure:</strong> 130/85 mmHg</li>
+              <li><strong>Respiratory Rate:</strong> 24 breaths/min</li>
+              <li><strong>Oxygen Saturation:</strong> 89% on room air</li>
+          </ul>
+      `,
+          },
+          assessment: {
+            header: "Assessment",
+            content:
+              "Client is experiencing difficulty breathing and has a productive cough with thick yellow sputum. Auscultation reveals crackles in the lower lung fields.",
+          },
+        };
+        if (tabsInfo[tabId]) {
+          const { header, content } = tabsInfo[tabId];
+          document.querySelector(".l-container-body-header h4").textContent =
+            header;
+          document.querySelector(".l-container-body-content").innerHTML =
+            content;
+        }
+      };
+
+      const changeQuestion = () => {
+        console.log("clicked");
+
+        const questionTypes = {
+          1: {
+            question:
+              "Which assessment finding requires immediate nursing intervention?",
+            options: [
+              { id: "option1", text: "Temperature 38.8°C (101.8°F)" },
+              { id: "option2", text: "Thick yellow sputum" },
+              { id: "option3", text: "Oxygen saturation 89% on room air" },
+              { id: "option4", text: "Fatigue" },
+            ],
+            correctAnswerId: "option3",
+          },
+
+          2: {
+            question: `For each client statement, click or specify (with an X) whether the statement indicates <b>understanding</b> or <b>no understanding</b> of the teaching provided.`,
+            options: [
+              {
+                id: "scenario1",
+                text: "I'll call my surgeon if my incision gets red or has drainage.",
+              },
+              {
+                id: "scenario2",
+                text: "I can stop taking my blood thinner when I get home.",
+              },
+              {
+                id: "scenario3",
+                text: "I'll have physical therapy for about a week.",
+              },
+              {
+                id: "scenario4",
+                text: "I'm allowed to bear weight on my right leg.",
+              },
+              {
+                id: "scenario5",
+                text: "I can probably drive in a few months.",
+              },
+            ],
+          },
+        };
+
+        const questionDiv = document.querySelector(".question");
+        const currentQuestionId = parseInt(questionDiv.id);
+        const nextQuestionId = currentQuestionId + 1;
+
+        if (nextQuestionId > Object.keys(questionTypes).length) {
+          document.querySelector(".next-btn").style.display = "none";
+          return;
+        }
+
+        questionDiv.id = nextQuestionId;
+
+        const newQuestion = questionTypes[nextQuestionId];
+
+        document.querySelector(".r-container-header h4").textContent =
+          `Question ${nextQuestionId}`;
+
+        document.querySelector(".question-text").innerHTML =
+          newQuestion.question;
+
+        const optionsContainer = document.querySelector(".question-options");
+
+        // Reset UI
+        const feedbackDiv = document.querySelector(".feedback");
+        feedbackDiv.className = "feedback";
+        feedbackDiv.textContent = "";
+        feedbackDiv.style.display = "none";
+
+        document.querySelector(".next-btn").style.display = "none";
+
+        if (nextQuestionId === 2) {
+          optionsContainer.innerHTML = `
+      <table class="question-table">
+        <thead>
+          <tr>
+            <th>Client Statement</th>
+            <th>Understanding</th>
+            <th>No Understanding</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          ${newQuestion.options
+            .map(
+              (option) => `
+                <tr>
+                  <td>${option.text}</td>
+
+                  <td>
+                    <input
+                      type="radio"
+                      name="${option.id}"
+                      id="${option.id}-understanding"
+                      value="understanding">
+                  </td>
+
+                  <td>
+                    <input
+                      type="radio"
+                      name="${option.id}"
+                      id="${option.id}-noUnderstanding"
+                      value="noUnderstanding">
+                  </td>
+                </tr>
+              `,
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
+        }
+      };
+const checkAnswer = () => {
+  console.log("check clicked");
+
+  const questionTwoCorrectAnswer = {
+    1: "understanding",
+    2: "noUnderstanding",
+    3: "noUnderstanding",
+    4: "understanding",
+    5: "understanding",
+  };
+
+  const feedbackDiv = document.querySelector(".feedback");
+  const nextBtn = document.querySelector(".next-btn");
+
+  // Reset feedback
+  feedbackDiv.className = "feedback";
+  feedbackDiv.textContent = "";
+  feedbackDiv.removeAttribute("style");
+
+  if (document.querySelector(".question").id === "1") {
+    const selectedOption = document.querySelector(
+      'input[name="question-options"]:checked'
+    );
+
+    if (!selectedOption) {
+      feedbackDiv.classList.add("incorrect");
+      feedbackDiv.textContent =
+        "Please select an answer before submitting.";
+      return;
+    }
+
+    if (selectedOption.id === "option3") {
+      feedbackDiv.classList.add("correct");
+      feedbackDiv.textContent =
+        "Correct! Oxygen saturation below 90% is a critical finding that requires immediate intervention.";
+    } else {
+      feedbackDiv.classList.add("incorrect");
+      feedbackDiv.textContent =
+        "Incorrect. Please review the patient's vital signs and reassess.";
+    }
+
+    nextBtn.style.display = "inline-block";
+  }
+
+  else if (document.querySelector(".question").id === "2") {
+
+    const selectedOptions = Array.from(
+      document.querySelectorAll(".question-table input:checked")
+    );
+
+    if (selectedOptions.length < 5) {
+      feedbackDiv.classList.add("incorrect");
+      feedbackDiv.textContent =
+        "Please answer all statements before submitting.";
+      return;
+    }
+
+    let allCorrect = true;
+
+    selectedOptions.forEach((option, index) => {
+      const questionNumber = index + 1;
+
+      if (option.value !== questionTwoCorrectAnswer[questionNumber]) {
+        allCorrect = false;
+      }
+    });
+
+    if (allCorrect) {
+      feedbackDiv.classList.add("correct");
+      feedbackDiv.textContent =
+        "All answers are correct! The client demonstrates understanding of the teaching provided.";
+    } else {
+      feedbackDiv.classList.add("incorrect");
+      feedbackDiv.textContent =
+        "Some answers are incorrect. Please review the client's statements and reassess.";
+    }
+
+    nextBtn.style.display = "inline-block";
+  }
+};
+    </script>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0.5rem;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        background: #f7f7fb;
+        padding: 0.5rem;
+      }
+
+      .question {
+        display: flex;
+        gap: 40px;
+        align-items: flex-start;
+      }
+
+      .left-container {
+        width: 40%;
+      }
+
+      .right-container {
+        width: 60%;
+        background: white;
+        padding: 35px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        border-radius: 5px;
+        border: 1px solid #e5e5e5;
+      }
+
+      .l-container-header h4 {
+        font-size: 42px;
+        margin-bottom: 30px;
+      }
+
+      .l-container-btns {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      .case-info-btn {
+        background: #e9ecf4;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      .case-info-btn.active {
+        background: #ff4500;
+      }
+
+      .case-info-btn:hover {
+        opacity: 0.9;
+      }
+
+      .l-container-body {
+        background: white;
+        border: 1px solid #e5e5e5;
+        border-radius: 5px;
+        min-height: 380px;
+        padding: 22px;
+      }
+
+      .l-container-body-header {
+        margin-bottom: 20px;
+      }
+
+      .l-container-body-header h4 {
+        font-size: 30px;
+      }
+
+      .l-container-body-content {
+        font-size: 22px;
+        line-height: 1.5;
+      }
+
+      .r-container-header h4 {
+        color: #ff4500;
+        font-size: 40px;
+        margin-bottom: 20px;
+      }
+
+      .question-text {
+        font-size: 30px;
+        font-weight: bold;
+        margin-bottom: 25px;
+      }
+
+      .question-options {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-bottom: 30px;
+      }
+
+      .question-options label {
+        border: 1px solid #e5e5e5;
+        padding: 18px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        cursor: pointer;
+        font-size: 22px;
+      }
+
+      .question-options label:hover {
+        border-color: #ff4500;
+      }
+
+      .question-options input[type="radio"] {
+        transform: scale(1.3);
+      }
+
+      .submit-btn {
+        background: #ff4500;
+        color: white;
+        border: none;
+        padding: 15px 35px;
+        border-radius: 6px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .next-btn {
+        background: black;
+        color: white;
+        border: none;
+        padding: 15px 35px;
+        border-radius: 6px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .next-btn:hover {
+        background: black;
+        opacity: 0.5;
+      }
+
+      .submit-btn:hover {
+        background: #ff5c1f;
+      }
+
+      .feedback {
+        display: none;
+        margin: 1.5rem 0;
+        padding: 1rem 1.25rem;
+        border-radius: 6px;
+        border-left: 6px solid;
+        font-size: 1rem;
+        line-height: 1.5;
+        font-weight: 500;
+      }
+
+      .feedback.correct {
+        display: block;
+        background: #eefaf4;
+        color: #1f7a43;
+        border-color: #2ecc71;
+      }
+
+      .feedback.incorrect {
+        display: block;
+        background: #fff3f3;
+        color: #c0392b;
+        border-color: #ff4500;
+      }
+    </style>
+  </body>
+</html>
