@@ -111,14 +111,14 @@
           vitalSigns: {
             header: "Vital Signs",
             content: `
-          <ul>
-              <li><strong>Temperature:</strong> 38.8°C (101.8°F)</li>
-              <li><strong>Heart Rate:</strong> 102 bpm</li>
-              <li><strong>Blood Pressure:</strong> 130/85 mmHg</li>
-              <li><strong>Respiratory Rate:</strong> 24 breaths/min</li>
-              <li><strong>Oxygen Saturation:</strong> 89% on room air</li>
-          </ul>
-      `,
+                <ul>
+                    <li><strong>Temperature:</strong> 38.8°C (101.8°F)</li>
+                    <li><strong>Heart Rate:</strong> 102 bpm</li>
+                    <li><strong>Blood Pressure:</strong> 130/85 mmHg</li>
+                    <li><strong>Respiratory Rate:</strong> 24 breaths/min</li>
+                    <li><strong>Oxygen Saturation:</strong> 89% on room air</li>
+                </ul>
+            `,
           },
           assessment: {
             header: "Assessment",
@@ -134,6 +134,10 @@
             content;
         }
       };
+
+      // This functions changes questions and options when the user clicks NEXT.
+      // It also resets the feedback and hides the NEXT button until the user submits an answer.
+      // It gets triggered when pressing NEXT.
 
       const changeQuestion = () => {
         console.log("clicked");
@@ -152,7 +156,8 @@
           },
 
           2: {
-            question: `For each client statement, click or specify (with an X) whether the statement indicates <b>understanding</b> or <b>no understanding</b> of the teaching provided.`,
+            question:
+              "For each client statement, click or specify (with an X) whether the statement indicates <b>understanding</b> or <b>no understanding</b> of the teaching provided.",
             options: [
               {
                 id: "scenario1",
@@ -176,6 +181,102 @@
               },
             ],
           },
+
+          3: {
+            question:
+              "The nurse reviews the client assessment findings and determines that the client most likely has which of the following conditions? <b>Select all that apply.</b>",
+            options: [
+              { id: "option1", text: "Urosepsis" },
+              { id: "option2", text: "Delirium" },
+              { id: "option3", text: "Dehydration" },
+              { id: "option4", text: "COVID-19" },
+              { id: "option5", text: "DKA" },
+              { id: "option6", text: "Transient ischemic attack" },
+              { id: "option7", text: "Hyperglycemic hyperosmolar syndrome" },
+            ],
+          },
+
+          4: {
+            question: `
+        Based on the client's assessment findings, complete the following sentence by choosing from the lists of options provided.
+        <br><br>
+
+        The nurse reviews the client's assessment data and recognizes that she most likely has
+        <span class="drop-down-cloze-answer" id="blank1">______</span>.
+        The priority for this client's care is to
+        <span class="drop-down-cloze-answer" id="blank2">______</span>.
+      `,
+
+            options: {
+              blank1: [
+                { id: "option1", text: "CKD" },
+                { id: "option2", text: "Gestational diabetes" },
+                { id: "option3", text: "Preeclampsia" },
+                { id: "option4", text: "HELLP syndrome" },
+              ],
+
+              blank2: [
+                { id: "option5", text: "Admit the client to the hospital" },
+                { id: "option6", text: "Ensure maternal and fetal safety" },
+                { id: "option7", text: "Restrict her fluid intake" },
+                { id: "option8", text: "Place her on a special diet" },
+              ],
+            },
+          },
+        };
+
+        const givenInfoTypes = {
+          1: {
+            showButtons: true,
+            header: "Nurse's Notes",
+            content:
+              "72-year-old client admitted with productive cough, fever, fatigue, and increasing shortness of breath. Thick yellow sputum observed. Chest X-ray pending.",
+          },
+
+          2: {
+            showButtons: false,
+            header: "Client Information",
+            content:
+              "The nurse provides health teaching for a 70-year-old client who had a TKA 3 days ago and is preparing to go home with a daughter.",
+          },
+
+          3: {
+            showButtons: false,
+            header: "Client Information",
+            content: `
+        An 81-year-old client was admitted to an acute care unit from an assisted-living facility with a low-grade fever and acute confusion.
+        The client's daughter tells the admitting nurse that the client's mother had a stroke 2 years ago that resulted in left hemiparesis
+        and urinary incontinence, and the client has been in the assisted-living facility for the past 5 months.
+        The client has a long history of DM type 2, which has been well controlled. Until this morning,
+        the client's daughter had not been allowed to visit the facility due to the COVID-19 pandemic.
+        During the visit today, the daughter noted that her mother was lethargic, confused, and unable to ambulate with a walker.
+        POC testing in the ED indicated the presence of multiple bacteria in the client's urine and FSBG of 331 mg/dL (18.4 mmol/L).
+        The client's BP is currently 96/48 mm Hg.
+      `,
+          },
+
+          4: {
+            showButtons: false,
+            header: "Client Information",
+            content: `
+        <p>
+          A woman who is 32 weeks pregnant visits her primary health care provider for the monthly OB visit. The nurse performs an initial assessment of the client prior to being examined by the provider and collects the following client data:
+        </p>
+
+        <ul>
+          <li>States that she has had several mild to moderate headaches during the past week</li>
+          <li>Gained 10 lb since last visit 4 weeks ago</li>
+          <li>States that the baby is very active, especially at night</li>
+          <li>FHR = 146 BPM</li>
+          <li>Temperature = 98°F (36.7°C)</li>
+          <li>HR = 82 BPM and regular</li>
+          <li>RR = 18 bpm</li>
+          <li>BP = 150/92 mm Hg</li>
+          <li>Urine protein = 1+</li>
+          <li>1+ pitting edema on both feet and ankles</li>
+        </ul>
+      `,
+          },
         };
 
         const questionDiv = document.querySelector(".question");
@@ -190,6 +291,16 @@
         questionDiv.id = nextQuestionId;
 
         const newQuestion = questionTypes[nextQuestionId];
+        const givenInfo = givenInfoTypes[nextQuestionId];
+
+        document.querySelector(".l-container-body-header h4").textContent =
+          givenInfo.header;
+
+        document.querySelector(".l-container-body-content").innerHTML =
+          givenInfo.content;
+
+        document.querySelector(".l-container-btns").style.display =
+          givenInfo.showButtons ? "flex" : "none";
 
         document.querySelector(".r-container-header h4").textContent =
           `Question ${nextQuestionId}`;
@@ -199,7 +310,6 @@
 
         const optionsContainer = document.querySelector(".question-options");
 
-        // Reset UI
         const feedbackDiv = document.querySelector(".feedback");
         feedbackDiv.className = "feedback";
         feedbackDiv.textContent = "";
@@ -247,146 +357,309 @@
         </tbody>
       </table>
     `;
+        } else if (nextQuestionId === 3) {
+          optionsContainer.innerHTML = `
+      ${newQuestion.options
+        .map(
+          (option) => `
+            <label>
+              <input
+                type="checkbox"
+                name="question-options"
+                id="${option.id}">
+              ${option.text}
+            </label>
+          `,
+        )
+        .join("")}
+    `;
+        } else if (nextQuestionId === 4) {
+          optionsContainer.innerHTML = `
+      <div class="cloze-options-container">
+        <div class="cloze-option-group">
+          <h4>Options for 1</h4>
+
+          ${newQuestion.options.blank1
+            .map(
+              (option) => `
+                <button
+                  type="button"
+                  class="cloze-option-btn"
+                  data-blank="blank1"
+                  data-option-id="${option.id}"
+                  onclick="selectClozeOption(this)">
+                  ${option.text}
+                </button>
+              `,
+            )
+            .join("")}
+        </div>
+
+        <div class="cloze-option-group">
+          <h4>Options for 2</h4>
+
+          ${newQuestion.options.blank2
+            .map(
+              (option) => `
+                <button
+                  type="button"
+                  class="cloze-option-btn"
+                  data-blank="blank2"
+                  data-option-id="${option.id}"
+                  onclick="selectClozeOption(this)">
+                  ${option.text}
+                </button>
+              `,
+            )
+            .join("")}
+        </div>
+      </div>
+    `;
         }
       };
-const checkAnswer = () => {
-  console.log("check clicked");
 
-  const questionTwoCorrectAnswer = {
-    1: "understanding",
-    2: "noUnderstanding",
-    3: "noUnderstanding",
-    4: "understanding",
-    5: "understanding",
-  };
+      const selectClozeOption = (button) => {
+        const blankId = button.dataset.blank;
+        const text = button.textContent.trim();
 
-  const feedbackDiv = document.querySelector(".feedback");
-  const nextBtn = document.querySelector(".next-btn");
+        // Update the corresponding blank
+        const blank = document.getElementById(blankId);
+        blank.textContent = text;
+        blank.style.color = "#FF4500";
 
-  // Reset feedback
-  feedbackDiv.className = "feedback";
-  feedbackDiv.textContent = "";
-  feedbackDiv.removeAttribute("style");
+        // Remove selection from other buttons in the same group
+        document
+          .querySelectorAll(`.cloze-option-btn[data-blank="${blankId}"]`)
+          .forEach((btn) => btn.classList.remove("selected"));
 
-  if (document.querySelector(".question").id === "1") {
-    const selectedOption = document.querySelector(
-      'input[name="question-options"]:checked'
-    );
+        // Highlight selected button
+        button.classList.add("selected");
+      };
 
-    if (!selectedOption) {
-      feedbackDiv.classList.add("incorrect");
-      feedbackDiv.textContent =
-        "Please select an answer before submitting.";
-      return;
-    }
+      const checkAnswer = () => {
+        console.log("check clicked");
+        const incorrectAnswers = {};
 
-    if (selectedOption.id === "option3") {
-      feedbackDiv.classList.add("correct");
-      feedbackDiv.textContent =
-        "Correct! Oxygen saturation below 90% is a critical finding that requires immediate intervention.";
-    } else {
-      feedbackDiv.classList.add("incorrect");
-      feedbackDiv.textContent =
-        "Incorrect. Please review the patient's vital signs and reassess.";
-    }
+        const questionTwoCorrectAnswer = {
+          1: "understanding",
+          2: "noUnderstanding",
+          3: "noUnderstanding",
+          4: "understanding",
+          5: "understanding",
+        };
 
-    nextBtn.style.display = "inline-block";
-  }
+        const feedbackDiv = document.querySelector(".feedback");
+        const nextBtn = document.querySelector(".next-btn");
 
-  else if (document.querySelector(".question").id === "2") {
+        // Reset feedback
+        feedbackDiv.className = "feedback";
+        feedbackDiv.textContent = "";
+        feedbackDiv.removeAttribute("style");
 
-    const selectedOptions = Array.from(
-      document.querySelectorAll(".question-table input:checked")
-    );
+        if (document.querySelector(".question").id === "1") {
+          const selectedOption = document.querySelector(
+            'input[name="question-options"]:checked',
+          );
 
-    if (selectedOptions.length < 5) {
-      feedbackDiv.classList.add("incorrect");
-      feedbackDiv.textContent =
-        "Please answer all statements before submitting.";
-      return;
-    }
+          if (!selectedOption) {
+            feedbackDiv.classList.add("incorrect");
+            feedbackDiv.textContent =
+              "Please select an answer before submitting.";
+            return;
+          }
 
-    let allCorrect = true;
+          if (selectedOption.id === "option3") {
+            feedbackDiv.classList.add("correct");
+            feedbackDiv.textContent =
+              "Correct! Oxygen saturation below 90% is a critical finding that requires immediate intervention.";
+          } else {
+            feedbackDiv.classList.add("incorrect");
+            feedbackDiv.textContent =
+              "Incorrect. Please review the patient's vital signs and reassess.";
+          }
 
-    selectedOptions.forEach((option, index) => {
-      const questionNumber = index + 1;
+          nextBtn.style.display = "inline-block";
+        } else if (document.querySelector(".question").id === "2") {
+          const selectedOptions = Array.from(
+            document.querySelectorAll(".question-table input:checked"),
+          );
 
-      if (option.value !== questionTwoCorrectAnswer[questionNumber]) {
-        allCorrect = false;
-      }
-    });
+          if (selectedOptions.length < 5) {
+            feedbackDiv.classList.add("incorrect");
+            feedbackDiv.textContent =
+              "Please answer all statements before submitting.";
+            return;
+          }
 
-    if (allCorrect) {
-      feedbackDiv.classList.add("correct");
-      feedbackDiv.textContent =
-        "All answers are correct! The client demonstrates understanding of the teaching provided.";
-    } else {
-      feedbackDiv.classList.add("incorrect");
-      feedbackDiv.textContent =
-        "Some answers are incorrect. Please review the client's statements and reassess.";
-    }
+          let allCorrect = true;
 
-    nextBtn.style.display = "inline-block";
-  }
-};
+          selectedOptions.forEach((option, index) => {
+            const questionNumber = index + 1;
+
+            if (option.value !== questionTwoCorrectAnswer[questionNumber]) {
+              allCorrect = false;
+              incorrectAnswers[questionNumber] = {
+                selected: option.value,
+                correct: questionTwoCorrectAnswer[questionNumber],
+              };
+            }
+          });
+
+          if (allCorrect) {
+            feedbackDiv.classList.add("correct");
+            feedbackDiv.textContent =
+              "All answers are correct! The client demonstrates understanding of the teaching provided.";
+          } else {
+            feedbackDiv.classList.add("incorrect");
+
+            const labelMap = {
+              understanding: "Understanding",
+              noUnderstanding: "No Understanding",
+            };
+
+            feedbackDiv.innerHTML = `
+          <strong>Some responses are incorrect.</strong><br>
+          Review the statements below and try again.
+          <br><br>
+
+          <strong>Incorrect Responses:</strong>
+          <ul style="margin-top:10px; padding-left:20px;">
+            ${Object.entries(incorrectAnswers)
+              .map(
+                ([questionNumber, { selected, correct }]) => `
+                  <li style="margin-bottom:10px;">
+                    <strong>Statement ${questionNumber}</strong><br>
+                    Your answer: ${labelMap[selected]}<br>
+                    Correct answer: ${labelMap[correct]}
+                  </li>
+                `,
+              )
+              .join("")}
+          </ul>
+        `;
+          }
+
+          nextBtn.style.display = "inline-block";
+        } else if (document.querySelector(".question").id === "3") {
+          const selectedOptions = Array.from(
+            document.querySelectorAll(
+              '.question-options input[type="checkbox"]:checked',
+            ),
+          );
+
+          const correctAnswers = ["option1", "option2", "option3", "option7"];
+
+          const selectedIds = selectedOptions.map((option) => option.id);
+
+          const allCorrect =
+            selectedIds.length === correctAnswers.length &&
+            selectedIds.every((id) => correctAnswers.includes(id));
+
+          if (allCorrect) {
+            feedbackDiv.classList.add("correct");
+            feedbackDiv.textContent =
+              "Correct! The client most likely has urosepsis, dehydration, and COVID-19.";
+          } else {
+            feedbackDiv.classList.add("incorrect");
+            feedbackDiv.textContent =
+              "Incorrect. The client most likely has urosepsis, delirium, dehydration, and hyperglycemia hyperosmolar syndrome.";
+          }
+
+          nextBtn.style.display = "inline-block";
+        } else if (document.querySelector(".question").id === "4") {
+          const blank1 = document.getElementById("blank1");
+          const blank2 = document.getElementById("blank2");
+
+          const blank1Text = blank1.textContent.trim();
+          const blank2Text = blank2.textContent.trim();
+
+          const correctBlank1 = "HELLP syndrome";
+          const correctBlank2 = "Place her on a special diet";
+
+          if (blank1Text === correctBlank1 && blank2Text === correctBlank2) {
+            feedbackDiv.classList.add("correct");
+            feedbackDiv.textContent =
+              "Correct! The sentence has been completed correctly.";
+          } else {
+            // Show the correct answers in the blanks
+            blank1.textContent = correctBlank1;
+            blank1.style.color = "#2ecc71";
+
+            blank2.textContent = correctBlank2;
+            blank2.style.color = "#2ecc71";
+
+            feedbackDiv.classList.add("incorrect");
+            feedbackDiv.textContent =
+              "Incorrect. The correct answers have been highlighted above.";
+          }
+
+          nextBtn.style.display = "inline-block";
+        }
+        F;
+      };
     </script>
 
     <style>
       * {
         margin: 0;
-        padding: 0.5rem;
+        padding: 0;
         box-sizing: border-box;
         font-family: Arial, Helvetica, sans-serif;
       }
 
       body {
         background: #f7f7fb;
-        padding: 0.5rem;
+        padding: 1rem;
       }
 
       .question {
         display: flex;
-        gap: 40px;
+        gap: 2rem;
         align-items: flex-start;
+        max-width: 1400px;
+        margin: 0 auto;
       }
 
       .left-container {
-        width: 40%;
+        width: 50%;
       }
 
       .right-container {
-        width: 60%;
-        background: white;
-        padding: 35px;
+        width: 50%;
+        background: #ffffff;
+        padding: 2rem;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-        border-radius: 5px;
+        border-radius: 8px;
         border: 1px solid #e5e5e5;
       }
 
       .l-container-header h4 {
-        font-size: 42px;
-        margin-bottom: 30px;
+        font-size: 2rem;
+        margin-bottom: 1.25rem;
       }
 
       .l-container-btns {
         display: flex;
-        gap: 10px;
-        margin-bottom: 20px;
+        gap: 0.625rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
       }
 
       .case-info-btn {
         background: #e9ecf4;
-        color: white;
+        color: #222;
         border: none;
-        padding: 12px 20px;
-        border-radius: 5px;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
         font-weight: bold;
         cursor: pointer;
         transition: 0.2s;
+        font-size: 0.95rem;
       }
 
       .case-info-btn.active {
         background: #ff4500;
+        color: #ffffff;
       }
 
       .case-info-btn:hover {
@@ -394,54 +667,56 @@ const checkAnswer = () => {
       }
 
       .l-container-body {
-        background: white;
+        background: #ffffff;
         border: 1px solid #e5e5e5;
-        border-radius: 5px;
-        min-height: 380px;
-        padding: 22px;
+        border-radius: 8px;
+        min-height: 300px;
+        padding: 1.5rem;
       }
 
       .l-container-body-header {
-        margin-bottom: 20px;
+        margin-bottom: 1rem;
       }
 
       .l-container-body-header h4 {
-        font-size: 30px;
+        font-size: 1.6rem;
       }
 
       .l-container-body-content {
-        font-size: 22px;
-        line-height: 1.5;
+        font-size: 1.15rem;
+        line-height: 1.55;
       }
 
       .r-container-header h4 {
         color: #ff4500;
-        font-size: 40px;
-        margin-bottom: 20px;
+        font-size: 2rem;
+        margin-bottom: 1rem;
       }
 
       .question-text {
-        font-size: 30px;
-        font-weight: bold;
-        margin-bottom: 25px;
+        font-size: 1.15rem;
+        line-height: 1.35;
+        margin-bottom: 1.5rem;
       }
 
       .question-options {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        margin-bottom: 30px;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
       }
 
       .question-options label {
         border: 1px solid #e5e5e5;
-        padding: 18px;
-        border-radius: 5px;
+        padding: 1rem;
+        border-radius: 6px;
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 0.75rem;
         cursor: pointer;
-        font-size: 22px;
+        font-size: 1.1rem;
+        line-height: 1.4;
+        background: #ffffff;
       }
 
       .question-options label:hover {
@@ -449,42 +724,66 @@ const checkAnswer = () => {
       }
 
       .question-options input[type="radio"] {
-        transform: scale(1.3);
+        transform: scale(1.15);
+      }
+
+      .question-table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #ffffff;
+        font-size: 1rem;
+      }
+
+      .question-table th,
+      .question-table td {
+        border: 1px solid #e5e5e5;
+        padding: 0.85rem;
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .question-table th:first-child,
+      .question-table td:first-child {
+        text-align: left;
+      }
+
+      .question-table th {
+        background: #f7f7fb;
+        font-weight: bold;
+      }
+
+      .submit-btn,
+      .next-btn {
+        border: none;
+        padding: 0.85rem 1.75rem;
+        border-radius: 6px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-right: 0.5rem;
       }
 
       .submit-btn {
         background: #ff4500;
-        color: white;
-        border: none;
-        padding: 15px 35px;
-        border-radius: 6px;
-        font-size: 18px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-      .next-btn {
-        background: black;
-        color: white;
-        border: none;
-        padding: 15px 35px;
-        border-radius: 6px;
-        font-size: 18px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-
-      .next-btn:hover {
-        background: black;
-        opacity: 0.5;
+        color: #ffffff;
       }
 
       .submit-btn:hover {
         background: #ff5c1f;
       }
 
+      .next-btn {
+        background: #000000;
+        color: #ffffff;
+      }
+
+      .next-btn:hover {
+        opacity: 0.65;
+      }
+
       .feedback {
         display: none;
-        margin: 1.5rem 0;
+        margin: 1.25rem 0;
         padding: 1rem 1.25rem;
         border-radius: 6px;
         border-left: 6px solid;
@@ -505,6 +804,128 @@ const checkAnswer = () => {
         background: #fff3f3;
         color: #c0392b;
         border-color: #ff4500;
+      }
+
+      .drop-down-cloze-answer {
+        display: inline-block;
+        min-width: 160px;
+        padding: 0.15rem 0.5rem;
+        margin: 0 0.25rem;
+        background: #dcefff;
+        color: #ff4500;
+        border-bottom: 2px solid #ff4500;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .cloze-options-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        border-top: 3px solid #3bb3a6;
+        padding-top: 0.75rem;
+        margin-top: 1rem;
+      }
+
+      .cloze-option-group h4 {
+        color: #142b5f;
+        font-size: 1.15rem;
+        margin-bottom: 0.5rem;
+        padding-bottom: 0.25rem;
+      }
+
+      .cloze-option-btn {
+        display: block;
+        width: 100%;
+        background: transparent;
+        border: none;
+        padding: 0.35rem 0;
+        text-align: left;
+        color: #333;
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      .cloze-option-btn:hover {
+        color: #ff4500;
+        font-weight: bold;
+      }
+
+      .cloze-option-btn.selected {
+        color: #ff4500;
+        font-weight: bold;
+        text-decoration: underline;
+      }
+
+      @media (max-width: 900px) {
+        body {
+          padding: 0.75rem;
+        }
+
+        .question {
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .left-container,
+        .right-container {
+          width: 100%;
+        }
+
+        .right-container {
+          padding: 1.25rem;
+        }
+
+        .l-container-header h4,
+        .r-container-header h4 {
+          font-size: 1.6rem;
+        }
+
+        .question-text {
+          font-size: 1.25rem;
+        }
+
+        .l-container-body-content,
+        .question-options label {
+          font-size: 1rem;
+        }
+
+        .question-table {
+          font-size: 0.95rem;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .l-container-btns {
+          flex-direction: column;
+        }
+
+        .case-info-btn,
+        .submit-btn,
+        .next-btn {
+          width: 100%;
+        }
+
+        .question-table {
+          display: block;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+
+        .question-table th,
+        .question-table td {
+          padding: 0.7rem;
+        }
+        .cloze-options-container {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+
+        .drop-down-cloze-answer {
+          display: block;
+          margin: 0.5rem 0;
+          width: 100%;
+        }
       }
     </style>
   </body>
