@@ -100,56 +100,596 @@
     </div>
 
     <script>
-      let highlightedResponses = [];
-      const changeInfoSection = (tabId, event) => {
-        document.querySelectorAll(".case-info-btn").forEach((btn) => {
-          btn.classList.remove("active");
-        });
+      /*
+    QUESTION ORDER:
+    Change the names below to reorder the activity.
+    The numeric ID stays the same, but the rendered question depends on the name.
+  */
+      const questionOrder = {
+        1: "mcq-single-response",
+        2: "mcq-matrix-single-response",
+        3: "select-all-that-apply",
+        4: "drop-down-cloze",
+        5: "drag-drop-cloze",
+        6: "highlight-in-table",
+      };
 
-        event.currentTarget.classList.add("active");
-        const tabsInfo = {
+      /*
+    //QUESTION INFO TABS:
+
+    // Each question has the same three tabs:
+
+    // NURSE'S NOTES, VITAL SIGNS, and ASSESSMENT.
+
+    // CHANGE THE LABEL, HEADER AND CONTENT FOR EACH TAB AS NEEDED
+
+    // IF YOU NEED BULLETPOINTS OR SPECIFIC FORMATTING OF CONTENT, USE AI TO HELP YOU WRITE THE INNER HTML
+  */
+      const questionInfoTabs = {
+        //MCQ-SINGLE-RESPONSE GIVEN
+        "mcq-single-response": {
           nurseNotes: {
+            label: "Nurse's Notes",
             header: "Nurse's Notes",
-            content:
-              "72-year-old client admitted with productive cough, fever, fatigue, and increasing shortness of breath. Thick yellow sputum observed. Chest X-ray pending.",
-          },
-          vitalSigns: {
-            header: "Vital Signs",
             content: `
-            <ul>
-                <li><strong>Temperature:</strong> 38.8°C (101.8°F)</li>
-                <li><strong>Heart Rate:</strong> 102 bpm</li>
-                <li><strong>Blood Pressure:</strong> 130/85 mmHg</li>
-                <li><strong>Respiratory Rate:</strong> 24 breaths/min</li>
-                <li><strong>Oxygen Saturation:</strong> 89% on room air</li>
-            </ul>
+          72-year-old client admitted with productive cough, fever, fatigue,
+          and increasing shortness of breath. Thick yellow sputum observed.
+          Chest X-ray pending.
         `,
           },
-          assessment: {
-            header: "Assessment",
-            content:
-              "Client is experiencing difficulty breathing and has a productive cough with thick yellow sputum. Auscultation reveals crackles in the lower lung fields.",
+
+          vitalSigns: {
+            label: "Vital Signs",
+            header: "Vital Signs",
+            content: `
+          <ul>
+            <li><strong>Temperature:</strong> 38.8°C (101.8°F)</li>
+            <li><strong>Heart Rate:</strong> 102 bpm</li>
+            <li><strong>Blood Pressure:</strong> 130/85 mmHg</li>
+            <li><strong>Respiratory Rate:</strong> 24 breaths/min</li>
+            <li><strong>Oxygen Saturation:</strong> 89% on room air</li>
+          </ul>
+        `,
           },
-        };
-        if (tabsInfo[tabId]) {
-          const { header, content } = tabsInfo[tabId];
-          document.querySelector(".l-container-body-header h4").textContent =
-            header;
-          document.querySelector(".l-container-body-content").innerHTML =
-            content;
-        }
+
+          assessment: {
+            label: "Assessment",
+            header: "Assessment",
+            content: `
+          Client is experiencing difficulty breathing and has a productive cough
+          with thick yellow sputum. Auscultation reveals crackles in the lower lung fields.
+        `,
+          },
+        },
+
+        //MCQ-MATRIX-SINGLE-RESPONSE GIVEN
+        "mcq-matrix-single-response": {
+          nurseNotes: {
+            label: "Nurse's Notes",
+            header: "Nurse's Notes",
+            content: `
+          The nurse provides health teaching for a 70-year-old client who had
+          a total knee arthroplasty 3 days ago and is preparing to go home with a daughter.
+        `,
+          },
+
+          vitalSigns: {
+            label: "Vital Signs",
+            header: "Vital Signs",
+            content: `
+          No additional vital signs are provided for this question.
+        `,
+          },
+
+          assessment: {
+            label: "Assessment",
+            header: "Assessment",
+            content: `
+          The client is preparing for discharge teaching after surgery.
+          The nurse evaluates which statements show understanding of home care instructions.
+        `,
+          },
+        },
+
+        //SELECT-ALL-THAT-APPLY GIVEN
+        "select-all-that-apply": {
+          nurseNotes: {
+            label: "Nurse's Notes",
+            header: "Nurse's Notes",
+            content: `
+          An 81-year-old client was admitted to an acute care unit from an assisted-living facility
+          with a low-grade fever and acute confusion. The client's daughter tells the admitting nurse
+          that the client's mother had a stroke 2 years ago that resulted in left hemiparesis
+          and urinary incontinence, and the client has been in the assisted-living facility
+          for the past 5 months. The client has a long history of DM type 2, which has been well controlled.
+        `,
+          },
+
+          vitalSigns: {
+            label: "Vital Signs",
+            header: "Vital Signs",
+            content: `
+          <ul>
+            <li><strong>Blood Pressure:</strong> 96/48 mm Hg</li>
+            <li><strong>Fingerstick Blood Glucose:</strong> 331 mg/dL (18.4 mmol/L)</li>
+            <li><strong>Temperature:</strong> Low-grade fever</li>
+          </ul>
+        `,
+          },
+
+          assessment: {
+            label: "Assessment",
+            header: "Assessment",
+            content: `
+          The client is lethargic, confused, and unable to ambulate with a walker.
+          POC testing in the ED indicated the presence of multiple bacteria in the client's urine.
+        `,
+          },
+        },
+
+        //DROP-DOWN-CLOZE GIVEN
+        "drop-down-cloze": {
+          nurseNotes: {
+            label: "Nurse's Notes",
+            header: "Nurse's Notes",
+            content: `
+          <p>
+            A woman who is 32 weeks pregnant visits her primary health care provider
+            for the monthly OB visit. The nurse performs an initial assessment
+            of the client prior to being examined by the provider.
+          </p>
+
+          <ul>
+            <li>States that she has had several mild to moderate headaches during the past week</li>
+            <li>Gained 10 lb since last visit 4 weeks ago</li>
+            <li>States that the baby is very active, especially at night</li>
+            <li>Urine protein = 1+</li>
+            <li>1+ pitting edema on both feet and ankles</li>
+          </ul>
+        `,
+          },
+
+          vitalSigns: {
+            label: "Vital Signs",
+            header: "Vital Signs",
+            content: `
+          <ul>
+            <li><strong>FHR:</strong> 146 BPM</li>
+            <li><strong>Temperature:</strong> 98°F (36.7°C)</li>
+            <li><strong>Heart Rate:</strong> 82 BPM and regular</li>
+            <li><strong>Respiratory Rate:</strong> 18 bpm</li>
+            <li><strong>Blood Pressure:</strong> 150/92 mm Hg</li>
+          </ul>
+        `,
+          },
+
+          assessment: {
+            label: "Assessment",
+            header: "Assessment",
+            content: `
+          The client is 32 weeks pregnant and has elevated blood pressure,
+          protein in the urine, recent headaches, weight gain, and edema.
+        `,
+          },
+        },
+        //DRAG-DROP-CLOZE GIVEN
+        "drag-drop-cloze": {
+          nurseNotes: {
+            label: "Nurse's Notes",
+            header: "Nurse's Notes",
+            content: `
+          <p>
+            A woman who is 32 weeks pregnant visits her primary health care provider
+            for her monthly OB visit. The nurse performs an initial assessment
+            of the client prior to her being examined by the provider.
+          </p>
+
+          <ul>
+            <li>States that she has had several mild to moderate headaches during the past week</li>
+            <li>Gained 10 lb since her last visit 4 weeks ago</li>
+            <li>States that the baby is very active, especially at night</li>
+            <li>Urine protein = 1+</li>
+            <li>1+ pitting edema on both feet and ankles</li>
+          </ul>
+        `,
+          },
+
+          vitalSigns: {
+            label: "Vital Signs",
+            header: "Vital Signs",
+            content: `
+          <ul>
+            <li><strong>FHR:</strong> 146 BPM</li>
+            <li><strong>Temperature:</strong> 98°F (36.7°C)</li>
+            <li><strong>Heart Rate:</strong> 82 BPM and regular</li>
+            <li><strong>Respiratory Rate:</strong> 18 bpm</li>
+            <li><strong>Blood Pressure:</strong> 150/92 mm Hg</li>
+          </ul>
+        `,
+          },
+
+          assessment: {
+            label: "Assessment",
+            header: "Assessment",
+            content: `
+          The client is 32 weeks pregnant and has elevated blood pressure,
+          protein in the urine, recent headaches, weight gain, and edema.
+        `,
+          },
+        },
+
+        //HIGHLIGHT-IN-TABLE GIVEN
+
+        "highlight-in-table": {
+          nurseNotes: {
+            label: "Nurse's Notes",
+            header: "Nurse's Notes",
+            content: `
+          Click to highlight the findings that require <b>immediate</b> follow-up by
+          the nurse. Each body system will have at least one significant client finding.
+        `,
+          },
+
+          vitalSigns: {
+            label: "Vital Signs",
+            header: "Vital Signs",
+            content: `
+          Review the findings in the table carefully. Vital sign concerns may appear
+          under different body systems.
+        `,
+          },
+
+          assessment: {
+            label: "Assessment",
+            header: "Assessment",
+            content: `
+          The nurse should identify the findings that are abnormal, urgent,
+          or require immediate follow-up.
+        `,
+          },
+        },
       };
 
-      // This function increments the right container ID by 1 when the answer is correct.
-      // The right container ID is being used as the score.
-      const incrementScore = () => {
-        const rightContainer = document.querySelector(".right-container");
-        rightContainer.id = parseInt(rightContainer.id) + 1;
+      /*
+    QUESTION BANK:
+    This stores the actual question content, options, correct answers, and feedback.
+
+    TO BE CHANGHED:
+    1. QUESTION TEXT
+    2. OPTIONS TEXT
+    3. CORRECT ANSWER ID
+    4. CORRECT FEEDBACK
+    5. INCORRECT FEEDBACK
+  */
+      const questionBank = {
+        // MCQ-SINGLE-RESPONSE QUESTION
+        "mcq-single-response": {
+          type: "mcq-single-response",
+
+          question:
+            "Which assessment finding requires immediate nursing intervention?",
+          // ONLY OPTION TEXT CAN BE CHANGED
+          options: [
+            { id: "option1", text: "Temperature 38.8°C (101.8°F)" },
+            { id: "option2", text: "Thick yellow sputum" },
+            { id: "option3", text: "Oxygen saturation 89% on room air" },
+            { id: "option4", text: "Fatigue" },
+          ],
+
+          correctAnswerId: "option3", // MAKE SURE IT IS THE ID NOT TEXT
+
+          correctFeedback:
+            "Correct! Oxygen saturation below 90% is a critical finding that requires immediate intervention.",
+
+          incorrectFeedback:
+            "Incorrect. Oxygen saturation below 90% is a critical finding that requires immediate intervention.",
+        },
+
+        // MCQ-MATRIX-SINGLE-RESPONSE QUESTION
+        "mcq-matrix-single-response": {
+          type: "mcq-matrix-single-response",
+
+          question:
+            "For each client statement, click or specify (with an X) whether the statement indicates <b>understanding</b> or <b>no understanding</b> of the teaching provided.",
+          // ONLY OPTION TEXT CAN BE CHANGED AND reasonForIncorrect CAN BE CHANGED
+          options: [
+            {
+              id: "scenario1",
+              text: "I'll call my surgeon if my incision gets red or has drainage.",
+              reasonForIncorrect:
+                "This is rationale in case of wrong answer 1.",
+            },
+            {
+              id: "scenario2",
+              text: "I can stop taking my blood thinner when I get home.",
+              reasonForIncorrect:
+                "This is rationale in case of wrong answer 2.",
+            },
+            {
+              id: "scenario3",
+              text: "I'll have physical therapy for about a week.",
+              reasonForIncorrect:
+                "This is rationale in case of wrong answer 3.",
+            },
+            {
+              id: "scenario4",
+              text: "I'm allowed to bear weight on my right leg.",
+              reasonForIncorrect:
+                "This is rationale in case of wrong answer 4.",
+            },
+            {
+              id: "scenario5",
+              text: "I can probably drive in a few months.",
+              reasonForIncorrect:
+                "This is rationale in case of wrong answer 5.",
+            },
+          ],
+
+          // CHANGE THESE VALUES TO MATCH THE CORRECT ANSWERS FOR EACH SCENARIO
+
+          // INCORRECT ANSWER OF THIS PARTICULAR QUESTION IS IN FUNCTION checkMatrixAnswer() BELOW
+
+          correctAnswers: {
+            scenario1: "understanding",
+            scenario2: "noUnderstanding",
+            scenario3: "noUnderstanding",
+            scenario4: "understanding",
+            scenario5: "understanding",
+          },
+
+          correctFeedback:
+            "All answers are correct! The client demonstrates understanding of the teaching provided.",
+        },
+
+        // SELECT-ALL-THAT-APPLY QUESTION
+        "select-all-that-apply": {
+          type: "select-all-that-apply",
+
+          question:
+            "The nurse reviews the client assessment findings and determines that the client most likely has which of the following conditions? <b>Select all that apply.</b>",
+
+          // ONLY OPTION TEXT CAN BE CHANGED
+
+          options: [
+            { id: "option1", text: "Urosepsis" },
+            { id: "option2", text: "Delirium" },
+            { id: "option3", text: "Dehydration" },
+            { id: "option4", text: "COVID-19" },
+            { id: "option5", text: "DKA" },
+            { id: "option6", text: "Transient ischemic attack" },
+            { id: "option7", text: "Hyperglycemic hyperosmolar syndrome" },
+          ],
+
+          // CHANGE THESE VALUES TO MATCH THE CORRECT ANSWERS IDS
+
+          correctAnswerIds: ["option1", "option2", "option3", "option7"],
+
+          correctFeedback:
+            "Correct! The client most likely has urosepsis, delirium, dehydration, and hyperglycemic hyperosmolar syndrome.",
+
+          incorrectFeedback:
+            "Incorrect. The client most likely has urosepsis, delirium, dehydration, and hyperglycemic hyperosmolar syndrome.",
+        },
+
+        // DROP-DOWN-CLOZE QUESTION
+
+        "drop-down-cloze": {
+          type: "drop-down-cloze",
+
+          // DONT DELETE/CHANGE:
+          // 1. <span class="drop-down-cloze-answer" id="blank1">______</span>
+          // 2. <span class="drop-down-cloze-answer" id="blank2">______</span>.
+          // AS THERE SPANS ARE JUST BLANKS
+          // JUST CHANGE THE QUESTION WITHUT ALTERING THE <span> TAGS
+
+          question: `
+        Based on the client's assessment findings, complete the following sentence by choosing from the lists of options provided.
+        <br><br>
+
+        The nurse reviews the client's assessment data and recognizes that she most likely has
+        <span class="drop-down-cloze-answer" id="blank1">______</span>.
+        The priority for this client's care is to
+        <span class="drop-down-cloze-answer" id="blank2">______</span>.
+      `,
+          // ONLY OPTION TEXT CAN BE CHANGED
+          options: {
+            blank1: [
+              { id: "option1", text: "CKD" },
+              { id: "option2", text: "Gestational diabetes" },
+              { id: "option3", text: "Preeclampsia" },
+              { id: "option4", text: "HELLP syndrome" },
+            ],
+
+            blank2: [
+              { id: "option5", text: "Admit the client to the hospital" },
+              { id: "option6", text: "Ensure maternal and fetal safety" },
+              { id: "option7", text: "Restrict her fluid intake" },
+              { id: "option8", text: "Place her on a special diet" },
+            ],
+          },
+          // CHANGE THESE VALUES TO MATCH THE CORRECT ANSWERS VALUES
+          correctAnswers: {
+            blank1: "HELLP syndrome",
+            blank2: "Place her on a special diet",
+          },
+
+          correctFeedback:
+            "Correct! The sentence has been completed correctly.",
+
+          incorrectFeedback:
+            "Incorrect. The correct answers have been highlighted above.",
+        },
+
+        // DRAG-DROP-CLOZE QUESTION
+        "drag-drop-cloze": {
+          type: "drag-drop-cloze",
+
+          // DONT DELETE/CHANGE:
+          // 1. <span class="drag-drop-cloze-answer" id="blank1">______</span>
+          // 2. <span class="drag-drop-cloze-answer" id="blank2">______</span>
+          // AS THERE SPANS ARE JUST BLANKS
+          // JUST CHANGE THE QUESTION WITHUT ALTERING THE <span> TAGS
+
+          question: `
+        Drag (or select) words from the choices below to fill in the blank in
+        the following sentences.
+        <br><br>
+
+        The nurse reviews the client's assessment data and determines
+        that she has
+        <span class="drag-drop-cloze-answer" id="blank1" ondrop="dropClozeOption(event)" ondragover="allowClozeDrop(event)">______</span>
+        and
+        <span class="drag-drop-cloze-answer" id="blank2" ondrop="dropClozeOption(event)" ondragover="allowClozeDrop(event)">______</span>.
+      `,
+          // ONLY OPTION TEXT CAN BE CHANGED
+          options: [
+            { id: "option1", text: "HELPP syndrome" },
+            { id: "option2", text: "Gestational diabetes" },
+            { id: "option3", text: "Preeclampsia" },
+            { id: "option4", text: "CKD" },
+            { id: "option5", text: "Gestational hypertension" },
+            { id: "option6", text: "Heart failure" },
+          ],
+          // CHANGE THESE VALUES TO MATCH THE CORRECT ANSWERS VALUES
+          correctAnswers: ["Gestational hypertension", "Preeclampsia"],
+
+          correctFeedback:
+            "Correct! The client has gestational hypertension and preeclampsia.",
+
+          incorrectFeedback:
+            "Incorrect. The correct answers have been highlighted above.",
+        },
+
+        // HIGHLIGHT-IN-TABLE QUESTION
+        "highlight-in-table": {
+          type: "highlight-in-table",
+
+          question: "Table",
+
+          // ONLY OPTION BODY SYSTEM AND FINDING TEXT CAN BE CHANGE
+          // EACH {...} IS A ROW IN THE TABLE
+
+          options: [
+            {
+              bodySystem: "Gastrointestinal",
+              findings: [
+                { id: "finding1", text: "Recent history of constipation" },
+                { id: "finding2", text: "nausea and vomiting" },
+                {
+                  id: "finding3",
+                  text: "abdominal bowel sounds present x 4",
+                },
+              ],
+            },
+            {
+              bodySystem: "Neurologic",
+              findings: [
+                {
+                  id: "finding4",
+                  text: "Reports headache and being light-headed",
+                },
+                { id: "finding5", text: "reports fatigue" },
+                {
+                  id: "finding6",
+                  text: "blood glucose = 50 mg/dL (2.8 mmol/L)",
+                },
+              ],
+            },
+            {
+              bodySystem: "Respiratory",
+              findings: [
+                { id: "finding7", text: "Recent history of COVID" },
+                { id: "finding8", text: "RR = 28 bpm" },
+              ],
+            },
+            {
+              bodySystem: "Cardiovascular",
+              findings: [
+                { id: "finding9", text: "HR = 89 BPM" },
+                { id: "finding10", text: "BP = 146/88 mm Hg" },
+              ],
+            },
+          ],
+          // CHANGE THESE VALUES TO MATCH THE CORRECT FINDING IDs
+          correctAnswerIds: ["finding2", "finding6", "finding8", "finding10"],
+
+          correctFeedback:
+            "Correct! These findings require immediate follow-up by the nurse.",
+
+          incorrectFeedback:
+            "Incorrect. Review the client findings that require immediate follow-up.",
+        },
       };
 
-      // This function locks the Submit button after a valid submission.
-      // This prevents the user from submitting the same question more than once.
-      const lockSubmitAndShowNext = () => {
+      // DON'T ALTER THE REST OF THE FILE // DON'T ALTER THE REST OF THE FILE // DON'T ALTER THE REST OF THE FILE
+      /*
+    ACTIVITY STATE:
+    These values change as the learner moves through the activity. 
+  */
+      const activityState = {
+        currentQuestionId: 1,
+        score: 0,
+        highlightedResponses: [],
+      };
+
+      // DON'T ALTER
+      // Gets the current question name from questionOrder. DON'T EDIT
+      function getCurrentQuestionName() {
+        return questionOrder[activityState.currentQuestionId];
+      }
+
+      // Gets the current question object from questionBank. DON'T EDIT
+      function getCurrentQuestion() {
+        return questionBank[getCurrentQuestionName()];
+      }
+
+      // DON'T ALTER
+      // Gets the current question's tab object from questionInfoTabs. DON'T EDIT
+      function getCurrentQuestionTabs() {
+        return questionInfoTabs[getCurrentQuestionName()];
+      }
+
+      // DON'T ALTER
+      // Gets the total number of questions in the activity. DON'T EDIT
+      function getTotalQuestions() {
+        return Object.keys(questionOrder).length;
+      }
+
+      // DON'T ALTER
+      // Checks whether the current question is the last question. DON'T EDIT
+      function isLastQuestion() {
+        return activityState.currentQuestionId === getTotalQuestions();
+      }
+
+      // DON'T ALTER
+      // Adds one point to the score. DON'T EDIT
+      function incrementScore() {
+        activityState.score += 1;
+      }
+
+      // DON'T ALTER
+      // Resets the feedback box before rendering or checking a response.
+      function resetFeedback() {
+        const feedbackDiv = document.querySelector(".feedback");
+
+        feedbackDiv.className = "feedback";
+        feedbackDiv.textContent = "";
+        feedbackDiv.removeAttribute("style");
+      }
+
+      // DON'T ALTER
+      // Shows either correct or incorrect feedback.
+      function showFeedback(type, message) {
+        const feedbackDiv = document.querySelector(".feedback");
+
+        feedbackDiv.className = "feedback";
+        feedbackDiv.classList.add(type);
+        feedbackDiv.innerHTML = message;
+      }
+
+      // DON'T ALTER
+      // Disables the submit button after a valid submission and shows the next button.
+      function lockSubmitAndShowNext() {
         const submitBtn = document.querySelector(".submit-btn");
         const nextBtn = document.querySelector(".next-btn");
 
@@ -157,491 +697,616 @@
         submitBtn.style.opacity = "0.6";
         submitBtn.style.cursor = "not-allowed";
 
-        nextBtn.style.display = "inline-block";
-      };
-
-      // This functions changes questions and options when the user clicks NEXT.
-      // It also resets the feedback and hides the NEXT button until the user submits an answer.
-      // It gets triggered when pressing NEXT.
-
-      const toggleHighlightOption = (finding) => {
-        const findingId = finding.id;
-
-        if (highlightedResponses.includes(findingId)) {
-          highlightedResponses = highlightedResponses.filter(
-            (id) => id !== findingId,
-          );
-          finding.classList.remove("selected");
+        if (isLastQuestion()) {
+          nextBtn.textContent = "View Score";
+          nextBtn.onclick = showScore;
         } else {
-          highlightedResponses.push(findingId);
-          finding.classList.add("selected");
+          nextBtn.textContent = "Next";
+          nextBtn.onclick = changeQuestion;
         }
 
-        console.log(highlightedResponses);
-      };
+        nextBtn.style.display = "inline-block";
+      }
 
-      const changeQuestion = () => {
-        console.log("clicked");
+      // DON'T ALTER
+      // Renders the three info tabs for the current question.
+      function renderInfoTabs() {
+        const tabs = getCurrentQuestionTabs();
+        const tabsContainer = document.querySelector(".l-container-btns");
 
-        const questionTypes = {
-          1: {
-            question:
-              "Which assessment finding requires immediate nursing intervention?",
-            options: [
-              { id: "option1", text: "Temperature 38.8°C (101.8°F)" },
-              { id: "option2", text: "Thick yellow sputum" },
-              { id: "option3", text: "Oxygen saturation 89% on room air" },
-              { id: "option4", text: "Fatigue" },
-            ],
-            correctAnswerId: "option3",
-          },
+        const tabKeys = Object.keys(tabs);
 
-          2: {
-            question:
-              "For each client statement, click or specify (with an X) whether the statement indicates <b>understanding</b> or <b>no understanding</b> of the teaching provided.",
-            options: [
-              {
-                id: "scenario1",
-                text: "I'll call my surgeon if my incision gets red or has drainage.",
-              },
-              {
-                id: "scenario2",
-                text: "I can stop taking my blood thinner when I get home.",
-              },
-              {
-                id: "scenario3",
-                text: "I'll have physical therapy for about a week.",
-              },
-              {
-                id: "scenario4",
-                text: "I'm allowed to bear weight on my right leg.",
-              },
-              {
-                id: "scenario5",
-                text: "I can probably drive in a few months.",
-              },
-            ],
-          },
+        tabsContainer.innerHTML = tabKeys
+          .map(
+            (tabKey, index) => `
+          <button
+            class="case-info-btn ${index === 0 ? "active" : ""}"
+            onclick="changeInfoSection('${tabKey}', event)"
+          >
+            ${tabs[tabKey].label}
+          </button>
+        `,
+          )
+          .join("");
 
-          3: {
-            question:
-              "The nurse reviews the client assessment findings and determines that the client most likely has which of the following conditions? <b>Select all that apply.</b>",
-            options: [
-              { id: "option1", text: "Urosepsis" },
-              { id: "option2", text: "Delirium" },
-              { id: "option3", text: "Dehydration" },
-              { id: "option4", text: "COVID-19" },
-              { id: "option5", text: "DKA" },
-              { id: "option6", text: "Transient ischemic attack" },
-              { id: "option7", text: "Hyperglycemic hyperosmolar syndrome" },
-            ],
-          },
-
-          4: {
-            question: `
-    Based on the client's assessment findings, complete the following sentence by choosing from the lists of options provided.
-    <br><br>
-
-    The nurse reviews the client's assessment data and recognizes that she most likely has
-    <span class="drop-down-cloze-answer" id="blank1">______</span>.
-    The priority for this client's care is to
-    <span class="drop-down-cloze-answer" id="blank2">______</span>.
-  `,
-
-            options: {
-              blank1: [
-                { id: "option1", text: "CKD" },
-                { id: "option2", text: "Gestational diabetes" },
-                { id: "option3", text: "Preeclampsia" },
-                { id: "option4", text: "HELLP syndrome" },
-              ],
-
-              blank2: [
-                { id: "option5", text: "Admit the client to the hospital" },
-                { id: "option6", text: "Ensure maternal and fetal safety" },
-                { id: "option7", text: "Restrict her fluid intake" },
-                { id: "option8", text: "Place her on a special diet" },
-              ],
-            },
-          },
-
-          5: {
-            question: `Drag (or select) words from the choices below to fill in the blank in
-the following sentences. <br/>
-<br/>
-The nurse reviews the client's assessment data and determines
-that she has <span class="drag-drop-cloze-answer" id="blank1" ondrop="dropClozeOption(event)" ondragover="allowClozeDrop(event)">______</span> and <span class="drag-drop-cloze-answer" id="blank2" ondrop="dropClozeOption(event)" ondragover="allowClozeDrop(event)">______</span>.`,
-            options: [
-              { id: "option1", text: "HELPP syndrome" },
-              { id: "option2", text: "Gestational diabetes" },
-              { id: "option3", text: "Preeclampsia" },
-              { id: "option4", text: "CKD" },
-              { id: "option5", text: "Gestational hypertension" },
-              { id: "option6", text: "Heart failure" },
-            ],
-          },
-          6: {
-            question: "Table",
-            options: [
-              {
-                bodySystem: "Gastrointestinal",
-                findings: [
-                  { id: "finding1", text: "Recent history of constipation" },
-                  { id: "finding2", text: "nausea and vomiting" },
-                  {
-                    id: "finding3",
-                    text: "abdominal bowel sounds present x 4",
-                  },
-                ],
-              },
-              {
-                bodySystem: "Neurologic",
-                findings: [
-                  {
-                    id: "finding4",
-                    text: "Reports headache and being light-headed",
-                  },
-                  { id: "finding5", text: "reports fatigue" },
-                  {
-                    id: "finding6",
-                    text: "blood glucose = 50 mg/dL (2.8 mmol/L)",
-                  },
-                ],
-              },
-              {
-                bodySystem: "Respiratory",
-                findings: [
-                  { id: "finding7", text: "Recent history of COVID" },
-                  { id: "finding8", text: "RR = 28 bpm" },
-                ],
-              },
-              {
-                bodySystem: "Cardiovascular",
-                findings: [
-                  { id: "finding9", text: "HR = 89 BPM" },
-                  { id: "finding10", text: "BP = 146/88 mm Hg" },
-                ],
-              },
-            ],
-          },
-        };
-
-        const givenInfoTypes = {
-          1: {
-            showButtons: true,
-            header: "Nurse's Notes",
-            content:
-              "72-year-old client admitted with productive cough, fever, fatigue, and increasing shortness of breath. Thick yellow sputum observed. Chest X-ray pending.",
-          },
-
-          2: {
-            showButtons: false,
-            header: "Client Information",
-            content:
-              "The nurse provides health teaching for a 70-year-old client who had a TKA 3 days ago and is preparing to go home with a daughter.",
-          },
-
-          3: {
-            showButtons: false,
-            header: "Client Information",
-            content: `
-    An 81-year-old client was admitted to an acute care unit from an assisted-living facility with a low-grade fever and acute confusion.
-    The client's daughter tells the admitting nurse that the client's mother had a stroke 2 years ago that resulted in left hemiparesis
-    and urinary incontinence, and the client has been in the assisted-living facility for the past 5 months.
-    The client has a long history of DM type 2, which has been well controlled. Until this morning,
-    the client's daughter had not been allowed to visit the facility due to the COVID-19 pandemic.
-    During the visit today, the daughter noted that her mother was lethargic, confused, and unable to ambulate with a walker.
-    POC testing in the ED indicated the presence of multiple bacteria in the client's urine and FSBG of 331 mg/dL (18.4 mmol/L).
-    The client's BP is currently 96/48 mm Hg.
-  `,
-          },
-
-          4: {
-            showButtons: false,
-            header: "Client Information",
-            content: `
-    <p>
-      A woman who is 32 weeks pregnant visits her primary health care provider for the monthly OB visit. The nurse performs an initial assessment of the client prior to being examined by the provider and collects the following client data:
-    </p>
-
-    <ul>
-      <li>States that she has had several mild to moderate headaches during the past week</li>
-      <li>Gained 10 lb since last visit 4 weeks ago</li>
-      <li>States that the baby is very active, especially at night</li>
-      <li>FHR = 146 BPM</li>
-      <li>Temperature = 98°F (36.7°C)</li>
-      <li>HR = 82 BPM and regular</li>
-      <li>RR = 18 bpm</li>
-      <li>BP = 150/92 mm Hg</li>
-      <li>Urine protein = 1+</li>
-      <li>1+ pitting edema on both feet and ankles</li>
-    </ul>
-  `,
-          },
-          5: {
-            showButtons: false,
-            header: "Client Information",
-            content: `
-    <p>
-    A woman who is 32 weeks pregnant visits her primary health
-care provider for her monthly OB visit. The nurse performs an
-initial assessment of the client prior to her being examined by
-the provider and collects the following client data:
-    </p>
-
-    <ul>
-      <li>States that she has had several mild to moderate head
-aches during the past week</li>
-      <li>Gained 10 lb since her last visit 4 weeks ago</li>
-      <li>States that the baby is very active, especially at night</li>
-      <li>FHR = 146 BPM</li>
-      <li>Temperature = 98°F (36.7°C)</li>
-      <li>HR = 82 BPM and regular</li>
-      <li>RR = 18 bpm</li>
-      <li>BP = 150/92 mm Hg</li>
-      <li>Urine protein = 1+</li>
-      <li>1+ pitting edema on both feet and ankles</li>
-    </ul>
-  `,
-          },
-          6: {
-            showButtons: false,
-            header: "Client Information",
-            content: `Click to highlight the fndings that require <b>immediate</b> follow-up by
-the nurse. Each body system will have at least one signifcant client
-fnding.`,
-          },
-        };
-
-        const questionDiv = document.querySelector(".question");
-        const currentQuestionId = parseInt(questionDiv.id);
-        const nextQuestionId = currentQuestionId + 1;
-
-        if (nextQuestionId > Object.keys(questionTypes).length) {
-          document.querySelector(".next-btn").style.display = "none";
-          return;
-        }
-
-        questionDiv.id = nextQuestionId;
-
-        const newQuestion = questionTypes[nextQuestionId];
-        const givenInfo = givenInfoTypes[nextQuestionId];
+        const firstTab = tabs[tabKeys[0]];
 
         document.querySelector(".l-container-body-header h4").textContent =
-          givenInfo.header;
+          firstTab.header;
 
         document.querySelector(".l-container-body-content").innerHTML =
-          givenInfo.content;
+          firstTab.content;
+      }
 
-        document.querySelector(".l-container-btns").style.display =
-          givenInfo.showButtons ? "flex" : "none";
+      // DON'T ALTER
+      // Changes the visible info tab for the current question.
+      function changeInfoSection(tabId, event) {
+        const tabs = getCurrentQuestionTabs();
+        const selectedTab = tabs[tabId];
+
+        if (!selectedTab) return;
+
+        document.querySelectorAll(".case-info-btn").forEach((btn) => {
+          btn.classList.remove("active");
+        });
+
+        event.currentTarget.classList.add("active");
+
+        document.querySelector(".l-container-body-header h4").textContent =
+          selectedTab.header;
+
+        document.querySelector(".l-container-body-content").innerHTML =
+          selectedTab.content;
+      }
+
+      // DON'T ALTER
+      // Renders the full current question.
+      function renderQuestion() {
+        const question = getCurrentQuestion();
+
+        document.querySelector(".question").id =
+          activityState.currentQuestionId;
 
         document.querySelector(".r-container-header h4").textContent =
-          `Question ${nextQuestionId}`;
+          `Question ${activityState.currentQuestionId}`;
 
-        document.querySelector(".question-text").innerHTML =
-          newQuestion.question;
+        document.querySelector(".question-text").innerHTML = question.question;
 
-        const optionsContainer = document.querySelector(".question-options");
+        renderInfoTabs();
+        renderOptions(question);
+        resetFeedback();
 
-        const feedbackDiv = document.querySelector(".feedback");
-        feedbackDiv.className = "feedback";
-        feedbackDiv.textContent = "";
-        feedbackDiv.style.display = "none";
-
-        document.querySelector(".next-btn").style.display = "none";
-
-        // Re-enable Submit for the new question.
         const submitBtn = document.querySelector(".submit-btn");
         submitBtn.disabled = false;
         submitBtn.style.opacity = "1";
         submitBtn.style.cursor = "pointer";
 
         const nextBtn = document.querySelector(".next-btn");
+        nextBtn.style.display = "none";
         nextBtn.textContent = "Next";
         nextBtn.onclick = changeQuestion;
-        nextBtn.style.display = "none";
 
-        if (nextQuestionId === 2) {
-          optionsContainer.innerHTML = `
-  <table class="question-table">
-    <thead>
-      <tr>
-        <th>Client Statement</th>
-        <th>Understanding</th>
-        <th>No Understanding</th>
-      </tr>
-    </thead>
+        activityState.highlightedResponses = [];
+      }
 
-    <tbody>
-      ${newQuestion.options
-        .map(
-          (option) => `
-            <tr>
-              <td>${option.text}</td>
+      // DON'T ALTER
+      // Sends the current question to the correct option-rendering function.
+      function renderOptions(question) {
+        const optionsContainer = document.querySelector(".question-options");
 
-              <td>
-                <input
-                  type="radio"
-                  name="${option.id}"
-                  id="${option.id}-understanding"
-                  value="understanding">
-              </td>
+        if (question.type === "mcq-single-response") {
+          renderSingleResponseOptions(question, optionsContainer);
+        } else if (question.type === "mcq-matrix-single-response") {
+          renderMatrixOptions(question, optionsContainer);
+        } else if (question.type === "select-all-that-apply") {
+          renderSelectAllOptions(question, optionsContainer);
+        } else if (question.type === "drop-down-cloze") {
+          renderDropDownClozeOptions(question, optionsContainer);
+        } else if (question.type === "drag-drop-cloze") {
+          renderDragDropClozeOptions(question, optionsContainer);
+        } else if (question.type === "highlight-in-table") {
+          renderHighlightTableOptions(question, optionsContainer);
+        }
+      }
 
-              <td>
-                <input
-                  type="radio"
-                  name="${option.id}"
-                  id="${option.id}-noUnderstanding"
-                  value="noUnderstanding">
-              </td>
-            </tr>
-          `,
-        )
-        .join("")}
-    </tbody>
-  </table>
-`;
-        } else if (nextQuestionId === 3) {
-          optionsContainer.innerHTML = `
-  ${newQuestion.options
-    .map(
-      (option) => `
-        <label>
-          <input
-            type="checkbox"
-            name="question-options"
-            id="${option.id}">
-          ${option.text}
-        </label>
-      `,
-    )
-    .join("")}
-`;
-        } else if (nextQuestionId === 4) {
-          optionsContainer.innerHTML = `
-  <div class="cloze-options-container">
-    <div class="cloze-option-group">
-      <h4>Options for 1</h4>
-
-      ${newQuestion.options.blank1
-        .map(
-          (option) => `
-            <button
-              type="button"
-              class="cloze-option-btn"
-              data-blank="blank1"
-              data-option-id="${option.id}"
-              onclick="selectClozeOption(this)">
-              ${option.text}
-            </button>
-          `,
-        )
-        .join("")}
-    </div>
-
-    <div class="cloze-option-group">
-      <h4>Options for 2</h4>
-
-      ${newQuestion.options.blank2
-        .map(
-          (option) => `
-            <button
-              type="button"
-              class="cloze-option-btn"
-              data-blank="blank2"
-              data-option-id="${option.id}"
-              onclick="selectClozeOption(this)">
-              ${option.text}
-            </button>
-          `,
-        )
-        .join("")}
-    </div>
-  </div>
-`;
-        } else if (nextQuestionId === 5) {
-          optionsContainer.innerHTML = `
-    <div class="drag-drop-options-container">
-      ${newQuestion.options
-        .map(
-          (option) => `
-            <button
-              type="button"
-              class="drag-drop-option-btn"
-              draggable="true"
-              data-option-id="${option.id}"
-              ondragstart="dragClozeOption(event)"
-              onclick="selectDragDropClozeOption(this)">
-              ${option.text}
-            </button>
-          `,
-        )
-        .join("")}
-    </div>
-  `;
-        } else if (nextQuestionId === 6) {
-          highlightedResponses = [];
-
-          optionsContainer.innerHTML = `
-    <table class="highlight-table">
-      <thead>
-        <tr>
-          <th>Body System</th>
-          <th>Client Findings</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        ${newQuestion.options
+      // DON'T ALTER
+      // Renders single-response MCQ options.
+      function renderSingleResponseOptions(question, optionsContainer) {
+        optionsContainer.innerHTML = question.options
           .map(
-            (row) => `
-              <tr>
-                <td>${row.bodySystem}</td>
-                <td>
-                  ${row.findings
-                    .map(
-                      (finding) => `
-                        <span
-                          class="highlight-option"
-                          id="${finding.id}"
-                          onclick="toggleHighlightOption(this)">
-                          ${finding.text}
-                        </span>
-                      `,
-                    )
-                    .join(" ")}
-                </td>
-              </tr>
+            (option) => `
+          <label>
+            <input
+              type="radio"
+              name="question-options"
+              id="${option.id}"
+            />
+            ${option.text}
+          </label>
+        `,
+          )
+          .join("");
+      }
+
+      // DON'T ALTER
+      // Renders matrix-style MCQ options.
+      function renderMatrixOptions(question, optionsContainer) {
+        optionsContainer.innerHTML = `
+      <table class="question-table">
+        <thead>
+          <tr>
+            <th>Client Statement</th>
+            <th>Understanding</th>
+            <th>No Understanding</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          ${question.options
+            .map(
+              (option) => `
+                <tr>
+                  <td>${option.text}</td>
+
+                  <td>
+                    <input
+                      type="radio"
+                      name="${option.id}"
+                      id="${option.id}-understanding"
+                      value="understanding"
+                    />
+                  </td>
+
+                  <td>
+                    <input
+                      type="radio"
+                      name="${option.id}"
+                      id="${option.id}-noUnderstanding"
+                      value="noUnderstanding"
+                    />
+                  </td>
+                </tr>
+              `,
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
+      }
+
+      // DON'T ALTER
+      // Renders select-all-that-apply options.
+      function renderSelectAllOptions(question, optionsContainer) {
+        optionsContainer.innerHTML = question.options
+          .map(
+            (option) => `
+          <label>
+            <input
+              type="checkbox"
+              name="question-options"
+              id="${option.id}"
+            />
+            ${option.text}
+          </label>
+        `,
+          )
+          .join("");
+      }
+
+      // DON'T ALTER
+      // Renders drop-down cloze options.
+      function renderDropDownClozeOptions(question, optionsContainer) {
+        optionsContainer.innerHTML = `
+      <div class="cloze-options-container">
+        <div class="cloze-option-group">
+          <h4>Options for 1</h4>
+
+          ${question.options.blank1
+            .map(
+              (option) => `
+                <button
+                  type="button"
+                  class="cloze-option-btn"
+                  data-blank="blank1"
+                  data-option-id="${option.id}"
+                  onclick="selectClozeOption(this)"
+                >
+                  ${option.text}
+                </button>
+              `,
+            )
+            .join("")}
+        </div>
+
+        <div class="cloze-option-group">
+          <h4>Options for 2</h4>
+
+          ${question.options.blank2
+            .map(
+              (option) => `
+                <button
+                  type="button"
+                  class="cloze-option-btn"
+                  data-blank="blank2"
+                  data-option-id="${option.id}"
+                  onclick="selectClozeOption(this)"
+                >
+                  ${option.text}
+                </button>
+              `,
+            )
+            .join("")}
+        </div>
+      </div>
+    `;
+      }
+
+      // DON'T ALTER
+      // Renders drag-drop cloze options.
+      function renderDragDropClozeOptions(question, optionsContainer) {
+        optionsContainer.innerHTML = `
+      <div class="drag-drop-options-container">
+        ${question.options
+          .map(
+            (option) => `
+              <button
+                type="button"
+                class="drag-drop-option-btn"
+                draggable="true"
+                data-option-id="${option.id}"
+                ondragstart="dragClozeOption(event)"
+                onclick="selectDragDropClozeOption(this)"
+              >
+                ${option.text}
+              </button>
             `,
           )
           .join("")}
-      </tbody>
-    </table>
-  `;
+      </div>
+    `;
+      }
+
+      // DON'T ALTER
+      // Renders highlight-in-table options.
+      function renderHighlightTableOptions(question, optionsContainer) {
+        activityState.highlightedResponses = [];
+
+        optionsContainer.innerHTML = `
+      <table class="highlight-table">
+        <thead>
+          <tr>
+            <th>Body System</th>
+            <th>Client Findings</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          ${question.options
+            .map(
+              (row) => `
+                <tr>
+                  <td>${row.bodySystem}</td>
+                  <td>
+                    ${row.findings
+                      .map(
+                        (finding) => `
+                          <span
+                            class="highlight-option"
+                            id="${finding.id}"
+                            onclick="toggleHighlightOption(this)"
+                          >
+                            ${finding.text}
+                          </span>
+                        `,
+                      )
+                      .join(" ")}
+                  </td>
+                </tr>
+              `,
+            )
+            .join("")}
+        </tbody>
+      </table>
+    `;
+      }
+
+      // DON'T ALTER
+      // Moves to the next question based on the numeric question ID. DON'T EDIT
+      function changeQuestion() {
+        activityState.currentQuestionId += 1;
+
+        if (activityState.currentQuestionId > getTotalQuestions()) {
+          showScore();
+          return;
         }
-      };
 
-      const allowClozeDrop = (event) => {
+        renderQuestion();
+      }
+
+      // DON'T ALTER
+      // Sends the answer check to the correct checking function. DON'T EDIT
+      function checkAnswer() {
+        const question = getCurrentQuestion();
+
+        resetFeedback();
+
+        if (question.type === "mcq-single-response") {
+          checkSingleResponseAnswer(question);
+        } else if (question.type === "mcq-matrix-single-response") {
+          checkMatrixAnswer(question);
+        } else if (question.type === "select-all-that-apply") {
+          checkSelectAllAnswer(question);
+        } else if (question.type === "drop-down-cloze") {
+          checkDropDownClozeAnswer(question);
+        } else if (question.type === "drag-drop-cloze") {
+          checkDragDropClozeAnswer(question);
+        } else if (question.type === "highlight-in-table") {
+          checkHighlightTableAnswer(question);
+        }
+      }
+
+      // DON'T ALTER
+      // Checks the single-response MCQ answer. DON'T EDIT
+      function checkSingleResponseAnswer(question) {
+        const selectedOption = document.querySelector(
+          'input[name="question-options"]:checked',
+        );
+
+        if (!selectedOption) {
+          showFeedback(
+            "incorrect",
+            "Please select an answer before submitting.",
+          );
+          return;
+        }
+
+        if (selectedOption.id === question.correctAnswerId) {
+          incrementScore();
+          showFeedback("correct", question.correctFeedback);
+        } else {
+          showFeedback("incorrect", question.incorrectFeedback);
+        }
+
+        lockSubmitAndShowNext();
+      }
+
+      // DON'T ALTER
+      // Checks the matrix-style MCQ answer.
+      function checkMatrixAnswer(question) {
+        const incorrectAnswers = {};
+        let allAnswered = true;
+        let allCorrect = true;
+
+        question.options.forEach((option, index) => {
+          const selectedOption = document.querySelector(
+            `input[name="${option.id}"]:checked`,
+          );
+
+          if (!selectedOption) {
+            allAnswered = false;
+            return;
+          }
+
+          const correctAnswer = question.correctAnswers[option.id];
+
+          if (selectedOption.value !== correctAnswer) {
+            allCorrect = false;
+
+            incorrectAnswers[index + 1] = {
+              selected: selectedOption.value,
+              correct: correctAnswer,
+            };
+          }
+        });
+
+        if (!allAnswered) {
+          showFeedback(
+            "incorrect",
+            "Please answer all statements before submitting.",
+          );
+          return;
+        }
+
+        if (allCorrect) {
+          incrementScore();
+          showFeedback("correct", question.correctFeedback);
+        } else {
+          const labelMap = {
+            understanding: "Understanding",
+            noUnderstanding: "No Understanding",
+          };
+
+          showFeedback(
+            "incorrect",
+            `
+          <strong>Some responses are incorrect.</strong><br>
+          Review the statements below.
+          <br><br>
+
+          <strong>Incorrect Responses:</strong>
+          <ul style="margin-top:10px; padding-left:20px;">
+            ${Object.entries(incorrectAnswers)
+              .map(
+                ([questionNumber, { selected, correct }]) => `
+                  <li style="margin-bottom:10px;">
+                    <strong>Statement ${questionNumber}</strong><br>
+                    Your answer: ${labelMap[selected]}<br>
+                    Correct answer: ${labelMap[correct]}<br>
+                    <strong>Reason: ${question.options[questionNumber - 1].reasonForIncorrect}</strong>
+                  </li>
+                `,
+              )
+              .join("")}
+          </ul>
+        `,
+          );
+        }
+
+        lockSubmitAndShowNext();
+      }
+
+      // DON'T ALTER
+      // Checks the select-all-that-apply answer. DON'T EDIT
+      function checkSelectAllAnswer(question) {
+        const selectedOptions = Array.from(
+          document.querySelectorAll(
+            '.question-options input[type="checkbox"]:checked',
+          ),
+        );
+
+        const selectedIds = selectedOptions.map((option) => option.id);
+
+        const allCorrect = arraysMatchExactly(
+          selectedIds,
+          question.correctAnswerIds,
+        );
+
+        if (allCorrect) {
+          incrementScore();
+          showFeedback("correct", question.correctFeedback);
+        } else {
+          showFeedback("incorrect", question.incorrectFeedback);
+        }
+
+        lockSubmitAndShowNext();
+      }
+
+      // DON'T ALTER
+      // Checks the drop-down cloze answer. DON'T EDIT
+      function checkDropDownClozeAnswer(question) {
+        const blank1 = document.getElementById("blank1");
+        const blank2 = document.getElementById("blank2");
+
+        const blank1Text = blank1.textContent.trim();
+        const blank2Text = blank2.textContent.trim();
+
+        const correctBlank1 = question.correctAnswers.blank1;
+        const correctBlank2 = question.correctAnswers.blank2;
+
+        if (blank1Text === correctBlank1 && blank2Text === correctBlank2) {
+          incrementScore();
+          showFeedback("correct", question.correctFeedback);
+        } else {
+          blank1.textContent = correctBlank1;
+          blank1.style.color = "#2ecc71";
+
+          blank2.textContent = correctBlank2;
+          blank2.style.color = "#2ecc71";
+
+          showFeedback("incorrect", question.incorrectFeedback);
+        }
+
+        lockSubmitAndShowNext();
+      }
+
+      // DON'T ALTER
+      // Checks the drag-drop cloze answer. DON'T EDIT
+      function checkDragDropClozeAnswer(question) {
+        const blank1 = document.getElementById("blank1");
+        const blank2 = document.getElementById("blank2");
+
+        const userAnswers = [
+          blank1.textContent.trim(),
+          blank2.textContent.trim(),
+        ];
+
+        const allCorrect = arraysMatchExactly(
+          userAnswers,
+          question.correctAnswers,
+        );
+
+        if (allCorrect) {
+          incrementScore();
+          showFeedback("correct", question.correctFeedback);
+        } else {
+          blank1.textContent = question.correctAnswers[0];
+          blank1.style.color = "#2ecc71";
+
+          blank2.textContent = question.correctAnswers[1];
+          blank2.style.color = "#2ecc71";
+
+          showFeedback("incorrect", question.incorrectFeedback);
+        }
+
+        lockSubmitAndShowNext();
+      }
+
+      // DON'T ALTER
+      // Checks the highlight-in-table answer. DON'T EDIT
+      function checkHighlightTableAnswer(question) {
+        const allCorrect = arraysMatchExactly(
+          activityState.highlightedResponses,
+          question.correctAnswerIds,
+        );
+
+        if (allCorrect) {
+          incrementScore();
+          showFeedback("correct", question.correctFeedback);
+        } else {
+          showFeedback("incorrect", question.incorrectFeedback);
+        }
+
+        lockSubmitAndShowNext();
+      }
+
+      // DON'T ALTER
+      // Compares two arrays and confirms they contain the same values.
+      function arraysMatchExactly(userAnswers, correctAnswers) {
+        if (userAnswers.length !== correctAnswers.length) return false;
+
+        const sortedUserAnswers = [...userAnswers].sort();
+        const sortedCorrectAnswers = [...correctAnswers].sort();
+
+        return sortedUserAnswers.every(
+          (answer, index) => answer === sortedCorrectAnswers[index],
+        );
+      }
+
+      // DON'T ALTER
+      // Selects or removes a highlighted table finding.
+      function toggleHighlightOption(finding) {
+        const findingId = finding.id;
+
+        if (activityState.highlightedResponses.includes(findingId)) {
+          activityState.highlightedResponses =
+            activityState.highlightedResponses.filter((id) => id !== findingId);
+
+          finding.classList.remove("selected");
+        } else {
+          activityState.highlightedResponses.push(findingId);
+          finding.classList.add("selected");
+        }
+      }
+
+      // DON'T ALTER
+      // Allows a drag-drop option to be dropped into a cloze blank.
+      function allowClozeDrop(event) {
         event.preventDefault();
-      };
+      }
 
-      const dragClozeOption = (event) => {
+      // DON'T ALTER
+      // Stores the dragged cloze option text.
+      function dragClozeOption(event) {
         event.dataTransfer.setData(
           "text/plain",
           event.target.textContent.trim(),
         );
-      };
+      }
 
-      const dropClozeOption = (event) => {
+      // DON'T ALTER
+      // Places the dragged cloze option into the selected blank. DON'T EDIT
+      function dropClozeOption(event) {
         event.preventDefault();
 
         const text = event.dataTransfer.getData("text/plain");
+
         event.target.textContent = text;
         event.target.style.color = "#FF4500";
-      };
+      }
 
-      const selectDragDropClozeOption = (button) => {
+      // DON'T ALTER
+      // Allows click-selection for drag-drop cloze options. DON'T EDIT
+      function selectDragDropClozeOption(button) {
         const firstBlank = document.getElementById("blank1");
         const secondBlank = document.getElementById("blank2");
 
@@ -652,297 +1317,64 @@ fnding.`,
           secondBlank.textContent = button.textContent.trim();
           secondBlank.style.color = "#FF4500";
         }
-      };
+      }
 
-      const selectClozeOption = (button) => {
+      // DON'T ALTER
+      // Selects a drop-down cloze option and places it into the correct blank. DON'T EDIT
+      function selectClozeOption(button) {
         const blankId = button.dataset.blank;
         const text = button.textContent.trim();
 
-        // Update the corresponding blank
         const blank = document.getElementById(blankId);
+
         blank.textContent = text;
         blank.style.color = "#FF4500";
 
-        // Remove selection from other buttons in the same group
         document
           .querySelectorAll(`.cloze-option-btn[data-blank="${blankId}"]`)
           .forEach((btn) => btn.classList.remove("selected"));
 
-        // Highlight selected button
         button.classList.add("selected");
-      };
+      }
 
-      const checkAnswer = () => {
-        console.log("check clicked");
-        const incorrectAnswers = {};
-
-        const questionTwoCorrectAnswer = {
-          1: "understanding",
-          2: "noUnderstanding",
-          3: "noUnderstanding",
-          4: "understanding",
-          5: "understanding",
-        };
-
-        const feedbackDiv = document.querySelector(".feedback");
-
-        // Reset feedback
-        feedbackDiv.className = "feedback";
-        feedbackDiv.textContent = "";
-        feedbackDiv.removeAttribute("style");
-
-        if (document.querySelector(".question").id === "1") {
-          const selectedOption = document.querySelector(
-            'input[name="question-options"]:checked',
-          );
-
-          if (!selectedOption) {
-            feedbackDiv.classList.add("incorrect");
-            feedbackDiv.textContent =
-              "Please select an answer before submitting.";
-            return;
-          }
-
-          if (selectedOption.id === "option3") {
-            incrementScore();
-
-            feedbackDiv.classList.add("correct");
-            feedbackDiv.textContent =
-              "Correct! Oxygen saturation below 90% is a critical finding that requires immediate intervention.";
-          } else {
-            feedbackDiv.classList.add("incorrect");
-            feedbackDiv.textContent =
-              "Incorrect. Oxygen saturation below 90% is a critical finding that requires immediate intervention.";
-          }
-
-          lockSubmitAndShowNext();
-        } else if (document.querySelector(".question").id === "2") {
-          const selectedOptions = Array.from(
-            document.querySelectorAll(".question-table input:checked"),
-          );
-
-          if (selectedOptions.length < 5) {
-            feedbackDiv.classList.add("incorrect");
-            feedbackDiv.textContent =
-              "Please answer all statements before submitting.";
-            return;
-          }
-
-          let allCorrect = true;
-
-          selectedOptions.forEach((option, index) => {
-            const questionNumber = index + 1;
-
-            if (option.value !== questionTwoCorrectAnswer[questionNumber]) {
-              allCorrect = false;
-              incorrectAnswers[questionNumber] = {
-                selected: option.value,
-                correct: questionTwoCorrectAnswer[questionNumber],
-              };
-            }
-          });
-
-          if (allCorrect) {
-            incrementScore();
-
-            feedbackDiv.classList.add("correct");
-            feedbackDiv.textContent =
-              "All answers are correct! The client demonstrates understanding of the teaching provided.";
-          } else {
-            feedbackDiv.classList.add("incorrect");
-
-            const labelMap = {
-              understanding: "Understanding",
-              noUnderstanding: "No Understanding",
-            };
-
-            feedbackDiv.innerHTML = `
-      <strong>Some responses are incorrect.</strong><br>
-      Review the statements below.
-      <br><br>
-
-      <strong>Incorrect Responses:</strong>
-      <ul style="margin-top:10px; padding-left:20px;">
-        ${Object.entries(incorrectAnswers)
-          .map(
-            ([questionNumber, { selected, correct }]) => `
-              <li style="margin-bottom:10px;">
-                <strong>Statement ${questionNumber}</strong><br>
-                Your answer: ${labelMap[selected]}<br>
-                Correct answer: ${labelMap[correct]}
-              </li>
-            `,
-          )
-          .join("")}
-      </ul>
-    `;
-          }
-
-          lockSubmitAndShowNext();
-        } else if (document.querySelector(".question").id === "3") {
-          const selectedOptions = Array.from(
-            document.querySelectorAll(
-              '.question-options input[type="checkbox"]:checked',
-            ),
-          );
-
-          const correctAnswers = ["option1", "option2", "option3", "option7"];
-
-          const selectedIds = selectedOptions.map((option) => option.id);
-
-          const allCorrect =
-            selectedIds.length === correctAnswers.length &&
-            selectedIds.every((id) => correctAnswers.includes(id));
-
-          if (allCorrect) {
-            incrementScore();
-
-            feedbackDiv.classList.add("correct");
-            feedbackDiv.textContent =
-              "Correct! The client most likely has urosepsis, dehydration, and COVID-19.";
-          } else {
-            feedbackDiv.classList.add("incorrect");
-            feedbackDiv.textContent =
-              "Incorrect. The client most likely has urosepsis, delirium, dehydration, and hyperglycemia hyperosmolar syndrome.";
-          }
-
-          lockSubmitAndShowNext();
-        } else if (document.querySelector(".question").id === "4") {
-          const blank1 = document.getElementById("blank1");
-          const blank2 = document.getElementById("blank2");
-
-          const blank1Text = blank1.textContent.trim();
-          const blank2Text = blank2.textContent.trim();
-
-          const correctBlank1 = "HELLP syndrome";
-          const correctBlank2 = "Place her on a special diet";
-
-          if (blank1Text === correctBlank1 && blank2Text === correctBlank2) {
-            incrementScore();
-
-            feedbackDiv.classList.add("correct");
-            feedbackDiv.textContent =
-              "Correct! The sentence has been completed correctly.";
-          } else {
-            // Show the correct answers in the blanks
-            blank1.textContent = correctBlank1;
-            blank1.style.color = "#2ecc71";
-
-            blank2.textContent = correctBlank2;
-            blank2.style.color = "#2ecc71";
-
-            feedbackDiv.classList.add("incorrect");
-            feedbackDiv.textContent =
-              "Incorrect. The correct answers have been highlighted above.";
-          }
-
-          lockSubmitAndShowNext();
-        } else if (document.querySelector(".question").id === "5") {
-          const blank1 = document.getElementById("blank1");
-          const blank2 = document.getElementById("blank2");
-
-          const userAnswers = [
-            blank1.textContent.trim(),
-            blank2.textContent.trim(),
-          ];
-
-          const correctAnswers = ["Gestational hypertension", "Preeclampsia"];
-
-          const allCorrect =
-            userAnswers.length === correctAnswers.length &&
-            userAnswers.every((answer) => correctAnswers.includes(answer));
-
-          if (allCorrect) {
-            incrementScore();
-
-            feedbackDiv.classList.add("correct");
-            feedbackDiv.textContent =
-              "Correct! The client has gestational hypertension and preeclampsia.";
-          } else {
-            // Show the correct answers
-            blank1.textContent = "Gestational hypertension";
-            blank1.style.color = "#2ecc71";
-
-            blank2.textContent = "Preeclampsia";
-            blank2.style.color = "#2ecc71";
-
-            feedbackDiv.classList.add("incorrect");
-            feedbackDiv.textContent =
-              "Incorrect. The correct answers have been highlighted above.";
-          }
-
-          lockSubmitAndShowNext();
-        } else if (document.querySelector(".question").id === "6") {
-          const correctHighlightAnswers = [
-            "finding2",
-            "finding6",
-            "finding8",
-            "finding10",
-          ];
-
-          const allCorrect =
-            highlightedResponses.length === correctHighlightAnswers.length &&
-            highlightedResponses.every((id) =>
-              correctHighlightAnswers.includes(id),
-            );
-
-          if (allCorrect) {
-            incrementScore();
-
-            feedbackDiv.classList.add("correct");
-            feedbackDiv.textContent =
-              "Correct! These findings require immediate follow-up by the nurse.";
-          } else {
-            feedbackDiv.classList.add("incorrect");
-            feedbackDiv.textContent =
-              "Incorrect. Review the client findings that require immediate follow-up.";
-          }
-
-          const submitBtn = document.querySelector(".submit-btn");
-          const nextBtn = document.querySelector(".next-btn");
-
-          submitBtn.disabled = true;
-          submitBtn.style.opacity = "0.6";
-          submitBtn.style.cursor = "not-allowed";
-
-          nextBtn.textContent = "View Score";
-          nextBtn.style.display = "inline-block";
-          nextBtn.onclick = showScore;
-        }
-      };
-
-      const retryActivity = () => {
+      // DON'T ALTER
+      // Reloads the activity from the beginning. DON'T EDIT
+      function retryActivity() {
         location.reload();
-      };
+      }
 
-      const showScore = () => {
-        const totalQuestions = 6;
-        const score = parseInt(document.querySelector(".right-container").id);
+      // DON'T ALTER
+      // Shows the final score screen. DON'T EDIT
+      function showScore() {
+        const totalQuestions = getTotalQuestions();
+        const score = activityState.score;
         const percentage = Math.round((score / totalQuestions) * 100);
 
         document.querySelector(".question").innerHTML = `
-    <div class="score-screen">
+      <div class="score-screen">
+        <h2>Activity Complete!</h2>
 
-      <h2>Activity Complete!</h2>
+        <div class="score-circle">
+          ${score}/${totalQuestions}
+        </div>
 
-      <div class="score-circle">
-        ${score}/${totalQuestions}
+        <p class="score-percentage">${percentage}%</p>
+
+        <p class="score-message">
+          You answered <strong>${score}</strong> out of
+          <strong>${totalQuestions}</strong> questions correctly.
+        </p>
+
+        <button class="retry-btn" onclick="retryActivity()">
+          Retry Activity
+        </button>
       </div>
+    `;
+      }
 
-      <p class="score-percentage">${percentage}%</p>
-
-      <p class="score-message">
-        You answered <strong>${score}</strong> out of
-        <strong>${totalQuestions}</strong> questions correctly.
-      </p>
-
-      <button class="retry-btn" onclick="retryActivity()">
-        Retry Activity
-      </button>
-
-    </div>
-  `;
-      };
+      // DON'T ALTER
+      // Renders the first question when the page loads. DON'T EDIT
+      document.addEventListener("DOMContentLoaded", renderQuestion);
     </script>
 
     <style>
@@ -991,6 +1423,7 @@ fnding.`,
 
       .l-container-header h4,
       .r-container-header h4 {
+        color: #142b5f;
         font-size: 1.45rem;
         line-height: 1.2;
         margin-bottom: 0.85rem;
